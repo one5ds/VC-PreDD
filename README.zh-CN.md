@@ -1,6 +1,6 @@
-# VC 360° 投研尽调报告
+# VC-PreDD
 
-**把一份 BP 变成投决会可以直接使用的尽调报告：单文件 HTML、十张图表、100 分记分卡，以及一份明确写出「哪些没查到」的缺口台账。**
+**VC 360 度投研尽调报告生成器。把一份 BP 变成投决会可以直接使用的尽调报告：单文件 HTML、十张图表、100 分记分卡，以及一份明确写出「哪些没查到」的缺口台账。**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-1a3a5c.svg)](#许可证)
 [![图表](https://img.shields.io/badge/ECharts-10%20张图表-2d5a87.svg)](#效果预览)
@@ -97,18 +97,20 @@ flowchart LR
 技能遵循 `SKILL.md` 目录约定，克隆到你的技能目录即可：
 
 ```bash
-git clone https://github.com/<your-org>/vc-dd-360-report.git \
+git clone https://github.com/one5ds/VC-PreDD.git \
   ~/.workbuddy/skills/vc-dd-360-report
 ```
 
 Windows（PowerShell）：
 
 ```powershell
-git clone https://github.com/<your-org>/vc-dd-360-report.git `
+git clone https://github.com/one5ds/VC-PreDD.git `
   "$env:USERPROFILE\.workbuddy\skills\vc-dd-360-report"
 ```
 
 也可以下载 release 压缩包，解压到技能目录，确保 `SKILL.md` 直接位于技能文件夹内。
+
+克隆的目标目录是 `vc-dd-360-report`，这是 frontmatter 里的技能标识名，须保持小写连字符格式。仓库名 `VC-PreDD` 是对外的展示名，平台索引认的是标识名。
 
 如果你的运行环境从别的目录加载 `SKILL.md` 技能，把文件夹放过去即可。frontmatter 里同时提供了 `name`、`description`、`display_name`、`display_name_en`、`description_zh`，中英文平台都能正常索引。
 

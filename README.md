@@ -1,6 +1,6 @@
-# VC 360° Due Diligence Report
+# VC-PreDD
 
-**Turn a pitch deck into an investment-committee-ready due diligence report: one self-contained HTML file, ten charts, a 100-point scorecard, and an explicit record of what you could not verify.**
+**VC 360° due diligence report generator. Turn a pitch deck into an investment-committee-ready report: one self-contained HTML file, ten charts, a 100-point scorecard, and an explicit record of what you could not verify.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-1a3a5c.svg)](#license)
 [![Charts](https://img.shields.io/badge/ECharts-10%20charts-2d5a87.svg)](#gallery)
@@ -97,18 +97,20 @@ Two design decisions matter more than the rest.
 The skill follows the `SKILL.md` folder convention. Clone it into your agent's skills directory:
 
 ```bash
-git clone https://github.com/<your-org>/vc-dd-360-report.git \
+git clone https://github.com/one5ds/VC-PreDD.git \
   ~/.workbuddy/skills/vc-dd-360-report
 ```
 
 On Windows (PowerShell):
 
 ```powershell
-git clone https://github.com/<your-org>/vc-dd-360-report.git `
+git clone https://github.com/one5ds/VC-PreDD.git `
   "$env:USERPROFILE\.workbuddy\skills\vc-dd-360-report"
 ```
 
 Alternatively download the release archive and unzip so that `SKILL.md` sits directly inside the skill folder.
+
+The clone target directory is `vc-dd-360-report`, which is the skill identifier carried in the frontmatter. Keep it lowercase hyphen-case: the repository name `VC-PreDD` is a display name, the identifier is what platforms index on.
 
 If your runtime loads `SKILL.md` skills from a different directory, place the folder there. The frontmatter carries `name`, `description`, `display_name`, `display_name_en` and `description_zh` so both Chinese and English platforms can index it.
 

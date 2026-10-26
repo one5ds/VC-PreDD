@@ -13,25 +13,25 @@
 **仓库名**
 
 ```
-vc-dd-360-report
+VC-PreDD
 ```
 
 **About 描述（中文，建议优先用英文版放 About，中文放 README）**
 
 ```
-一级市场 360 度投研尽调报告生成器：BP 进，投决会可用的 HTML 报告出，含 100 分记分卡、风险雷达、估值与交易结构、尽调问题清单与信息缺口台账。
+VC 360 度投研尽调报告生成器：BP 进，投决会可用的 HTML 报告出，含 100 分记分卡、风险雷达、估值与交易结构、尽调问题清单与信息缺口台账。
 ```
 
 **About 描述（英文，GitHub About 栏位建议填这条）**
 
 ```
-Turn a pitch deck into an IC-ready due diligence report: single-file HTML with 10 ECharts, a 100-point scorecard, risk radar, valuation and deal structure, plus a DD question list and information-gap register.
+VC-PreDD · Turn a pitch deck into an IC-ready due diligence report: single-file HTML with 10 ECharts, a 100-point scorecard, risk radar, valuation and deal structure, plus a DD question list and information-gap register.
 ```
 
 **Website**
 
 ```
-https://github.com/AIOpenVC
+https://github.com/one5ds
 ```
 
 ### 2. Topics（话题标签）
@@ -115,13 +115,13 @@ Desk research. Does not replace legal, financial or technical due diligence. Val
 ### 5. 推送命令
 
 ```bash
-cd dist/repo/vc-dd-360-report
+cd dist/repo/VC-PreDD
 
 git init
 git branch -M main
 git add .
-git commit -m "feat: initial release of vc-dd-360-report skill"
-git remote add origin https://github.com/<your-org>/vc-dd-360-report.git
+git commit -m "feat: initial release of VC-PreDD"
+git remote add origin https://github.com/one5ds/VC-PreDD.git
 git push -u origin main
 ```
 
@@ -140,7 +140,7 @@ git push origin v1.0.0
 - [ ] `python scripts/check_report.py assets/report-template.html --template` 通过
 - [ ] 七张截图都在 `docs/images/`，README 中引用的路径正确
 - [ ] `LICENSE` 中的版权主体是你要的主体
-- [ ] README 里的 `git clone` 地址已替换为真实组织名
+- [ ] README 里的 `git clone` 地址为 `github.com/one5ds/VC-PreDD`
 - [ ] 演示数据说明保留在 README（截图使用虚构项目）
 - [ ] 确认仓库中没有任何真实项目材料、客户名单或未公开数据
 
@@ -153,7 +153,7 @@ git push origin v1.0.0
 **Name**
 
 ```
-vc-dd-360-report
+VC-PreDD
 ```
 
 **About**
@@ -177,18 +177,18 @@ Tag `v1.0.0`, title `v1.0.0 · First public release`. Use the English release no
 
 ### 3. Social preview
 
-Upload `docs/images/01-cover.png` under Settings → Social preview. Ideally produce a dedicated 1280×640 image with the project name.
+Upload `docs/images/01-cover.jpg` under Settings → Social preview. Ideally produce a dedicated 1280×640 image with the project name.
 
 ### 4. Push
 
 ```bash
-cd dist/repo/vc-dd-360-report
+cd dist/repo/VC-PreDD
 
 git init
 git branch -M main
 git add .
-git commit -m "feat: initial release of vc-dd-360-report skill"
-git remote add origin https://github.com/<your-org>/vc-dd-360-report.git
+git commit -m "feat: initial release of VC-PreDD"
+git remote add origin https://github.com/one5ds/VC-PreDD.git
 git push -u origin main
 
 git tag -a v1.0.0 -m "v1.0.0 First public release"
@@ -201,6 +201,6 @@ git push origin v1.0.0
 - [ ] `python scripts/check_report.py assets/report-template.html --template` passes
 - [ ] All seven screenshots exist in `docs/images/` and README paths resolve
 - [ ] Copyright holder in `LICENSE` is the entity you want
-- [ ] Placeholder `<your-org>` in README clone URLs replaced with the real organisation
+- [ ] Clone URLs point to `github.com/one5ds/VC-PreDD`
 - [ ] Demo-data disclaimer retained in the README
 - [ ] No real deal materials, client lists or non-public data anywhere in the repository
