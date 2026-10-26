@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{项目名称}} 投研分析报告</title>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5/dist/echarts.min.js"></script>
+<style>
+/* ============ 变量 ============ */
+:root{
+  --primary:#1a3a5c; --secondary:#2d5a87; --accent:#c5a572;
+  --high:#c0392b; --mid:#e67e22; --low:#27ae60;
+  --bg:#f5f3f0; --card:#ffffff; --text:#2c2c2c; --text-soft:#6b6b6b;
+  --line:#d9d4cd; --line-soft:#efece7; --row:#faf9f7;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:"Microsoft YaHei","PingFang SC","Hiragino Sans GB",sans-serif;
+  background:var(--bg); color:var(--text);
+  font-size:15px; line-height:1.8;
+  padding:32px 0;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{max-width:960px;margin:0 auto;padding:0 24px;}
+.num,.n{font-family:"Segoe UI","Microsoft YaHei",sans-serif;font-variant-numeric:tabular-nums;}
+
+/* ============ 封面 ============ */
+.cover{
+  max-width:960px;margin:0 auto 8px;
+  background:linear-gradient(135deg,#1a3a5c 0%,#2d5a87 55%,#3d6d9c 100%);
+  color:#fff;border-radius:0 0 12px 12px;
+  padding:56px 48px 44px;
+  position:relative;overflow:hidden;
+}
+.cover::after{
+  content:"";position:absolute;right:-60px;top:-60px;
+  width:260px;height:260px;border-radius:50%;
+  background:rgba(197,165,114,.14);
+}
+.cover .tag{
+  display:inline-block;font-size:12px;letter-spacing:2px;
+  color:var(--accent);border:1px solid rgba(197,165,114,.6);
+  border-radius:4px;padding:3px 10px;margin-bottom:22px;
+}
+.cover h1{
+  font-size:30px;font-weight:700;line-height:1.4;
+  margin:0 0 10px;color:#fff;
+}
+.cover .sub{font-size:16px;color:rgba(255,255,255,.78);margin:0 0 32px;line-height:1.6;}
+.cover .meta{
+  display:grid;grid-template-columns:repeat(2,1fr);
+  gap:14px 32px;font-size:13px;position:relative;z-index:1;
+}
+.cover .meta div{display:flex;gap:10px;}
+.cover .meta .k{color:rgba(255,255,255,.6);flex:0 0 76px;}
+.cover .meta .v{color:#fff;font-weight:500;}
+
+/* ============ 标题 ============ */
+h1.sec{
+  display:flex;align-items:center;gap:14px;
+  font-size:20px;font-weight:700;line-height:1.5;
+  color:#fff;background:var(--primary);
+  margin:48px 0 20px;padding:14px 20px;
+  border-radius:10px;border-bottom:2px solid var(--line);
+  text-align:left;text-indent:0;
+  break-after:avoid;page-break-after:avoid;
+}
+h1.sec .num{
+  flex:0 0 32px;width:32px;height:32px;border-radius:8px;
+  background:var(--secondary);border:1px solid rgba(255,255,255,.4);
+  color:#fff;font-size:15px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;
+}
+h2{font-size:16px;font-weight:600;color:var(--primary);line-height:1.5;margin:32px 0 12px;text-indent:0;break-after:avoid;page-break-after:avoid;}
+h3{font-size:15px;font-weight:600;color:var(--primary);line-height:1.6;margin:20px 0 8px;text-indent:0;break-after:avoid;page-break-after:avoid;}
+p{font-size:15px;line-height:1.8;margin:0 0 12px;text-align:justify;text-indent:0;}
+ul,ol{margin:0 0 14px;padding-left:22px;}
+li{font-size:15px;line-height:1.8;margin-bottom:6px;}
+strong{color:var(--primary);font-weight:600;}
+.src{font-size:11px;color:var(--secondary);background:rgba(45,90,135,.08);border-radius:3px;padding:1px 5px;margin-left:2px;white-space:nowrap;}
+.lead{font-size:15px;line-height:1.9;color:#1f2d3d;background:#fff;border-left:4px solid var(--accent);border-radius:10px;padding:22px 26px;margin:18px 0;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+
+/* ============ 表格 ============ */
+table{width:100%;border-collapse:collapse;font-size:14px;margin:16px 0;border-radius:8px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.04);background:#fff;break-inside:auto;page-break-inside:auto;}
+thead th{background:var(--primary);color:#fff;font-size:13px;font-weight:600;padding:12px 14px;text-align:left;line-height:1.5;}
+tbody td{padding:11px 14px;border-bottom:1px solid var(--line-soft);vertical-align:top;line-height:1.7;}
+tbody tr:nth-child(even){background:var(--row);}
+tbody tr:last-child td{border-bottom:none;}
+td.n,th.n{text-align:right;}
+caption{caption-side:top;text-align:left;font-size:13px;font-weight:600;color:var(--primary);padding:0 0 8px;}
+.tbl-note{font-size:12px;color:var(--text-soft);margin:-8px 0 20px;line-height:1.6;}
+
+/* ============ 卡片 ============ */
+.card{background:#fff;border-radius:10px;padding:24px 28px;margin:20px 0;box-shadow:0 1px 4px rgba(0,0,0,.04);border-left:4px solid var(--accent);break-inside:avoid;page-break-inside:avoid;}
+.card.high{border-left-color:var(--high);}
+.card.mid{border-left-color:var(--mid);}
+.card.low{border-left-color:var(--low);}
+.card .h{font-size:15px;font-weight:600;color:var(--primary);margin:0 0 10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.card .lvl{font-size:11px;font-weight:600;color:#fff;border-radius:3px;padding:2px 8px;letter-spacing:.5px;}
+.card.high .lvl{background:var(--high);}
+.card.mid .lvl{background:var(--mid);}
+.card.low .lvl{background:var(--low);}
+.card .row{font-size:14px;line-height:1.8;margin:0 0 8px;color:#333;}
+.card .row b{color:var(--primary);font-weight:600;}
+
+/* ============ 记分卡 ============ */
+.score-wrap{background:#fff;border-radius:12px;padding:30px 32px;margin:22px 0;box-shadow:0 1px 4px rgba(0,0,0,.05);break-inside:avoid;page-break-inside:avoid;}
+.score-top{display:flex;align-items:center;gap:28px;flex-wrap:wrap;margin-bottom:8px;}
+.score-total{display:flex;align-items:baseline;gap:8px;}
+.score-total .big{font-size:64px;font-weight:700;color:var(--primary);line-height:1;font-family:"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;}
+.score-total .of{font-size:16px;color:var(--text-soft);}
+.score-grade{width:76px;height:76px;border-radius:12px;background:linear-gradient(135deg,var(--primary),var(--secondary));color:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;}
+.score-grade .g{font-size:30px;font-weight:700;line-height:1.1;}
+.score-grade .t{font-size:11px;opacity:.8;}
+.score-decision{font-size:15px;font-weight:600;padding:8px 20px;border-radius:8px;color:#fff;background:var(--low);}
+.score-decision.watch{background:var(--mid);}
+.score-decision.reject{background:var(--high);}
+
+/* ============ 图表 ============ */
+.chart-container{display:flex;flex-direction:column;width:100%;height:360px;min-height:320px;margin:24px 0;padding:16px 8px 10px;background:#fff;border-radius:10px;box-shadow:0 1px 4px rgba(0,0,0,.04);break-inside:avoid;page-break-inside:avoid;}
+.chart{flex:1 1 auto;width:100%;min-height:240px;}
+.chart-title{font-size:14px;font-weight:600;color:var(--primary);margin:0 0 4px 12px;}
+.chart-note{font-size:12px;color:#8a8a8a;margin:8px 0 0 12px;line-height:1.5;}
+
+/* ============ KPI ============ */
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:20px 0;}
+.kpi{background:#fff;border-radius:10px;padding:18px 20px;box-shadow:0 1px 4px rgba(0,0,0,.04);border-top:3px solid var(--accent);}
+.kpi .k{font-size:12px;color:var(--text-soft);margin-bottom:6px;}
+.kpi .v{font-size:22px;font-weight:700;color:var(--primary);font-variant-numeric:tabular-nums;line-height:1.3;}
+.kpi .u{font-size:12px;color:var(--text-soft);margin-left:3px;font-weight:400;}
+
+/* ============ 页脚 ============ */
+.footer-credit{
+  max-width:960px;margin:56px auto 0;
+  text-align:center;font-size:14px;color:var(--text-soft);
+  border-top:1px solid var(--line);
+  padding:32px 24px;
+  line-height:2;
+}
+.disclaimer{background:#fff;border-radius:10px;padding:22px 26px;margin:24px 0 0;font-size:13px;line-height:1.9;color:#555;border-left:4px solid var(--line);break-inside:avoid;page-break-inside:avoid;}
+
+/* ============ 响应式 ============ */
+@media (max-width:768px){
+  body{padding:16px 0;font-size:14px;}
+  .wrap{padding:0 14px;}
+  .cover{padding:36px 22px 30px;border-radius:0;}
+  .cover h1{font-size:22px;}
+  .cover .sub{font-size:14px;}
+  .cover .meta{grid-template-columns:1fr;gap:8px;}
+  h1.sec{font-size:17px;padding:12px 14px;margin:32px 0 16px;}
+  p,li{font-size:14px;}
+  table{font-size:12.5px;}
+  thead th,tbody td{padding:8px 10px;}
+  .kpi-grid{grid-template-columns:repeat(2,1fr);}
+  .chart-container{height:300px;}
+  .score-total .big{font-size:48px;}
+  .score-top{gap:16px;}
+}
+
+/* ============ 打印 ============ */
+@page{ size:A4; margin:16mm 13mm; }
+@media print{
+  body{background:#fff;padding:0;font-size:12pt;}
+  .wrap{max-width:none;padding:0;}
+  .cover{max-width:none;border-radius:0;padding:40px 32px;break-after:page;page-break-after:always;}
+  .cover::after{display:none;}
+  .chart-container{height:340px !important;box-shadow:none;border:1px solid var(--line-soft);}
+  .chart-container,.card,.kpi,.score-wrap,table,section,div{overflow:visible !important;}
+  table{break-inside:auto;page-break-inside:auto;box-shadow:none;}
+  thead{display:table-header-group;}
+  tr{break-inside:avoid;page-break-inside:avoid;}
+  h1.sec,h2,h3{break-after:avoid;page-break-after:avoid;}
+  .no-print{display:none !important;}
+  a{color:var(--primary);text-decoration:none;}
+  .footer-credit{break-inside:avoid;page-break-inside:avoid;}
+}
+</style>
+</head>
+<body>
+
+<!-- ==================== 封面 ==================== -->
+<div class="cover">
+  <span class="tag">投资研究与尽职调查</span>
+  <h1>{{项目名称}} 投研分析报告</h1>
+  <p class="sub">{{一句话定位}}<br>初步尽调版 · 依据 {{基准日}} 前可获得材料</p>
+  <div class="meta">
+    <div><span class="k">交易主体</span><span class="v">{{公司全称}}</span></div>
+    <div><span class="k">融资轮次</span><span class="v">{{轮次}}</span></div>
+    <div><span class="k">定价基准</span><span class="v">{{投前估值}} 万元（投前）</span></div>
+    <div><span class="k">数据基准日</span><span class="v">{{基准日}}</span></div>
+    <div><span class="k">报告日期</span><span class="v">{{报告日期}}</span></div>
+    <div><span class="k">密级</span><span class="v">内部 · 限投决会使用</span></div>
+  </div>
+</div>
+
+<div class="wrap">
+
+<!-- ==================== 执行摘要 ==================== -->
+<h1 class="sec"><span class="num">01</span>执行摘要</h1>
+<p>{{不超过 500 字。只放判断与逻辑，不放财务明细，不放表格。结构建议：项目是什么 → 三个支持理由 → 三个反对理由 → 综合结论 → 结论的推翻条件。}}</p>
+<div class="lead">{{核心判断段落。用完整段落表述投资逻辑，写明"在给定假设下，本项目的投资价值主要取决于 X、Y、Z 三个变量"。}}</div>
+
+<!-- ==================== 记分卡 ==================== -->
+<h1 class="sec"><span class="num">02</span>投决记分卡</h1>
+<div class="score-wrap">
+  <div class="score-top">
+    <div class="score-total"><span class="big" id="scoreBig">00</span><span class="of">/ 100</span></div>
+    <div class="score-grade"><span class="g" id="scoreGrade">A</span><span class="t">项目评价</span></div>
+    <div class="score-decision" id="scoreDecision">推荐</div>
+  </div>
+  <div class="chart-container" style="box-shadow:none;margin:10px 0 0;height:300px;">
+  <div class="chart-title">六维得分与满分刻度</div>
+  <div class="chart" id="c1"></div>
+  </div>
+  <div class="chart-note">评分口径见《评分与风险》参考文件，各维度打分依据在下表逐项列示。</div>
+</div>
+
+<table><caption>表 2-1 六维评分依据</caption>
+  
+  <thead><tr><th style="width:18%">维度</th><th class="n" style="width:10%">得分</th><th style="width:12%">置信度</th><th>打分依据与扣分项</th></tr></thead>
+  <tbody>
+    <tr><td>赛道与市场</td><td class="n">16 / 20</td><td>★★★★</td><td>{{依据与扣分}}</td></tr>
+    <tr><td>技术壁垒</td><td class="n">15 / 20</td><td>★★★</td><td>{{依据与扣分}}</td></tr>
+    <tr><td>商业模式与单位经济</td><td class="n">11 / 15</td><td>★★★</td><td>{{依据与扣分}}</td></tr>
+    <tr><td>财务质量</td><td class="n">10 / 15</td><td>★★★★</td><td>{{依据与扣分}}</td></tr>
+    <tr><td>团队与组织</td><td class="n">12 / 15</td><td>★★★</td><td>{{依据与扣分}}</td></tr>
+    <tr><td>估值与交易结构</td><td class="n">8 / 15</td><td>★★★★</td><td>{{依据与扣分}}</td></tr>
+    <tr><td><strong>合计</strong></td><td class="n"><strong>72 / 100</strong></td><td>—</td><td><strong>评级 A（良好），结论：推荐，附三项前置条件</strong></td></tr>
+  </tbody>
+</table>
+
+<!-- ==================== 交易标的概况 ==================== -->
+<h1 class="sec"><span class="num">03</span>交易标的概况</h1>
+
+<h2>3.1 公司基础信息</h2>
+<table><caption>表 3-1 公司基础信息</caption>
+  <thead><tr><th style="width:24%">项目</th><th style="width:38%">内容</th><th>来源</th></tr></thead>
+  <tbody>
+    <tr><td>公司全称</td><td>{{}}</td><td><span class="src">[S1]</span></td></tr>
+    <tr><td>成立时间</td><td>{{}}</td><td><span class="src">[S1]</span></td></tr>
+    <tr><td>注册地 / 经营地</td><td>{{}}</td><td><span class="src">[S1]</span></td></tr>
+    <tr><td>本轮轮次</td><td>{{}}</td><td><span class="src">[S2]</span></td></tr>
+    <tr><td>投前 / 投后估值</td><td>{{}} 万元 / {{}} 万元</td><td><span class="src">[S2]</span></td></tr>
+    <tr><td>本轮拟募资</td><td>{{}} 万元</td><td><span class="src">[S2]</span></td></tr>
+    <tr><td>团队规模</td><td>{{}} 人（研发 {{}} 人，占 {{}}%）</td><td><span class="src">[S8]</span></td></tr>
+    <tr><td>近三年营收</td><td>{{}} / {{}} / {{}} 万元</td><td><span class="src">[S1]</span></td></tr>
+    <tr><td>预测营收</td><td>{{}} 年 {{}} 万元</td><td><span class="src">[S9]</span></td></tr>
+    <tr><td>市占率</td><td>{{}}%（口径：{{}}）</td><td><span class="src">[S5]</span></td></tr>
+    <tr><td>专利数</td><td>发明 {{}} 项、实用新型 {{}} 项、PCT {{}} 项</td><td><span class="src">[S7]</span></td></tr>
+  </tbody>
+</table>
+<div class="tbl-note">金额单位：万元，保留两位小数。市占率口径须注明是按收入、出货量还是客户数计算。</div>
+
+<h2>3.2 股权结构</h2>
+<table><caption>表 3-2 股权结构</caption>
+  <thead><tr><th>股东</th><th>性质</th><th class="n">认缴出资（万元）</th><th class="n">持股比例</th><th>备注</th></tr></thead>
+  <tbody>
+    <tr><td>{{创始人}}</td><td>自然人</td><td class="n">{{}}</td><td class="n">{{}}%</td><td>{{一致行动安排}}</td></tr>
+    <tr><td>{{机构A}}</td><td>有限合伙</td><td class="n">{{}}</td><td class="n">{{}}%</td><td>{{}}</td></tr>
+    <tr><td>员工持股平台</td><td>有限合伙</td><td class="n">{{}}</td><td class="n">{{}}%</td><td>{{期权池比例}}</td></tr>
+    <tr><td>其他股东</td><td>—</td><td class="n">{{}}</td><td class="n">{{}}%</td><td>合计 {{}} 名</td></tr>
+    <tr><td><strong>合计</strong></td><td>—</td><td class="n"><strong>{{}}</strong></td><td class="n"><strong>100.00%</strong></td><td>—</td></tr>
+  </tbody>
+</table>
+<div class="tbl-note">持股比例合计须校验为 100.00%。若与工商公示存在差异，以公示为准并在备注列说明差异原因 <span class="src">[S4]</span>。</div>
+
+<h2>3.3 发展历程与商业模式</h2>
+<p>{{按时间轴写关键里程碑：成立、首台样机、首单客户、产线投产、历次融资。每个节点标注时间与来源。}}</p>
+<p>{{商业模式：卖给谁、卖什么、怎么收钱、复购从哪里来。用一段话说清，不要用标签。<span class="src">[S9]</span>}}</p>
+
+<!-- ==================== 市场与产业链 ==================== -->
+<h1 class="sec"><span class="num">04</span>市场与产业链</h1>
+
+<h2>4.1 市场规模的三法交叉</h2>
+<p>{{论述测算逻辑。说明为什么选这三种方法，以及三法结果的差异来自哪里。}}</p>
+<div class="chart-container">
+  <div class="chart-title">图 4-1 三种口径下的市场规模测算与收敛结果（亿元）</div>
+  <div class="chart" id="c2"></div>
+</div>
+<div class="chart-note">数据来源：表 4-1。三法偏差 {{}}%，{{高于/低于}} 30% 阈值，差异主因为 {{客户定义差异 / 地域范围 / 单价假设}}。</div>
+
+<table><caption>表 4-1 TAM / SAM / SOM 测算过程</caption>
+  
+  <thead><tr><th style="width:16%">层级</th><th class="n" style="width:14%">测算值（亿元）</th><th>测算过程与关键假设</th><th style="width:10%">来源</th></tr></thead>
+  <tbody>
+    <tr><td>TAM 自上而下</td><td class="n">{{}}</td><td>{{行业总规模 × 细分占比，占比取值依据}}</td><td><span class="src">[S5]</span></td></tr>
+    <tr><td>TAM 自下而上</td><td class="n">{{}}</td><td>{{客户总数 × 渗透率 × 年均单价}}</td><td><span class="src">[S6]</span></td></tr>
+    <tr><td>TAM 类比法</td><td class="n">{{}}</td><td>{{对标市场人均支出 × 国内基数 × 修正系数}}</td><td><span class="src">[S5]</span></td></tr>
+    <tr><td>SAM</td><td class="n">{{}}</td><td>{{TAM × 产品适配 {{}}% × 地域可达 {{}}% × 合规准入 {{}}%}}</td><td>推算 <span class="src">[E5]</span></td></tr>
+    <tr><td>SOM（第 3 年）</td><td class="n">{{}}</td><td>{{min(产能上限 × 单价, 销售团队 × 人均产出)}}</td><td>推算 <span class="src">[E5]</span></td></tr>
+  </tbody>
+</table>
+
+<h2>4.2 增长驱动与预测</h2>
+<p>{{政策、技术、需求三类驱动，各给可验证锚点。区分已发生与预期发生。}}</p>
+<div class="chart-container">
+  <div class="chart-title">图 4-2 市场规模历史与预测（亿元 / 增速 %）</div>
+  <div class="chart" id="c3"></div>
+</div>
+<div class="chart-note">数据来源：{{机构}}《{{报告名}}》{{年份}}，第 {{}} 页；2026 年及以后为本报告预测值，假设见正文。</div>
+
+<h2>4.3 产业链卡位</h2>
+<table><caption>表 4-2 主要竞品对比</caption>
+  <thead><tr><th style="width:14%">环节</th><th style="width:16%">代表企业</th><th class="n" style="width:12%">毛利率区间</th><th class="n" style="width:10%">CR3</th><th>议价能力与价值迁移判断</th></tr></thead>
+  <tbody>
+    <tr><td>上游</td><td>{{}}</td><td class="n">{{}}%</td><td class="n">{{}}%</td><td>{{}}</td></tr>
+    <tr><td><strong>本项目所处</strong></td><td>{{}}</td><td class="n">{{}}%</td><td class="n">{{}}%</td><td>{{}}</td></tr>
+    <tr><td>下游</td><td>{{}}</td><td class="n">{{}}%</td><td class="n">{{}}%</td><td>{{}}</td></tr>
+  </tbody>
+</table>
+
+<h2>4.4 竞争矩阵</h2>
+<div class="chart-container">
+  <div class="chart-title">图 4-3 竞争矩阵：技术壁垒 vs 成本优势（气泡面积 = 估算份额）</div>
+  <div class="chart" id="c4"></div>
+</div>
+<div class="chart-note">坐标打分锚点：成本优势 5 分 = 单位成本低于行业均值 30% 以上；技术壁垒 5 分 = 核心指标领先 50% 以上且 3 年内无成熟替代。数据来源：表 4-2 与公开资料。</div>
+
+<table><caption>表 4-3 产业链各环节利润池与议价能力</caption>
+  
+  <thead><tr><th>公司</th><th>成立</th><th>融资阶段</th><th>核心指标</th><th class="n">单价</th><th>客户类型</th><th>优势</th><th>短板</th></tr></thead>
+  <tbody>
+    <tr><td>{{本项目}}</td><td>{{}}</td><td>{{}}</td><td>{{}}</td><td class="n">{{}}</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+    <tr><td>{{竞品1}}</td><td>{{}}</td><td>{{}}</td><td>{{}}</td><td class="n">{{}}</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+    <tr><td>{{竞品2}}</td><td>{{}}</td><td>{{}}</td><td>{{}}</td><td class="n">{{}}</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+    <tr><td>{{海外1}}</td><td>{{}}</td><td>{{}}</td><td>{{}}</td><td class="n">{{}}</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+  </tbody>
+</table>
+
+<!-- ==================== 技术与产品 ==================== -->
+<h1 class="sec"><span class="num">05</span>技术与产品</h1>
+
+<h2>5.1 技术路线对比</h2>
+<table><caption>表 5-1 技术路线对比</caption>
+  <thead><tr><th style="width:14%">维度</th><th>{{本项目路线}}</th><th>{{主流路线}}</th><th>{{替代路线}}</th></tr></thead>
+  <tbody>
+    <tr><td>技术原理</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+    <tr><td>关键效能指标</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+    <tr><td>单位成本</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+    <tr><td>成熟度 TRL</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+    <tr><td>工程化瓶颈</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+    <tr><td>代表企业</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+  </tbody>
+</table>
+<p>{{效能提升的量化对比。写清对标基线的具体型号与测试条件，以及数据来源。例：{{指标}} 由 {{基准值}} 降至 {{实测值}}，改进 {{}}%，数据来自 {{检测机构}} 报告第 {{}} 页 <span class="src">[S7]</span>。}}</p>
+
+<h2>5.2 专利墙</h2>
+<table><caption>表 5-2 专利墙清单</caption>
+  <thead><tr><th>专利名称 / 申请号</th><th>类型</th><th>法律状态</th><th>申请日</th><th class="n">剩余保护期</th><th>权属</th></tr></thead>
+  <tbody>
+    <tr><td>{{}}</td><td>发明</td><td>有效</td><td>{{}}</td><td class="n">{{}} 年</td><td>公司</td></tr>
+    <tr><td>{{}}</td><td>发明</td><td>实质审查</td><td>{{}}</td><td class="n">—</td><td>公司</td></tr>
+    <tr><td>{{}}</td><td>PCT</td><td>国际阶段</td><td>{{}}</td><td class="n">—</td><td>公司</td></tr>
+  </tbody>
+</table>
+<div class="tbl-note">法律状态与国家知识产权局检索结果核对，检索日 {{}}。须单独确认：核心专利是否登记在公司名下、有无无效宣告或侵权诉讼、出口目标国的布局情况。</div>
+
+<h2>5.3 产品化里程碑</h2>
+<table><caption>表 5-3 产品化阶段与验证数据</caption>
+  <thead><tr><th>阶段</th><th>TRL</th><th>已完成事项</th><th>验证数据</th><th>证据来源</th></tr></thead>
+  <tbody>
+    <tr><td>实验室</td><td>3-4</td><td>{{}}</td><td>{{}}</td><td><span class="src">[S7]</span></td></tr>
+    <tr><td>中试</td><td>5-6</td><td>{{}}</td><td>良率 {{}}%，CPK {{}}</td><td><span class="src">[S7]</span></td></tr>
+    <tr><td>小批量</td><td>7-8</td><td>{{}}</td><td>交付 {{}} 台/套，客户 {{}} 家</td><td><span class="src">[S6]</span></td></tr>
+    <tr><td>量产</td><td>9</td><td>{{未达到 / 已达成}}</td><td>{{产能利用率、交付准时率}}</td><td>{{}}</td></tr>
+  </tbody>
+</table>
+
+<!-- ==================== 商业模式 ==================== -->
+<h1 class="sec"><span class="num">06</span>商业模式与单位经济</h1>
+
+<h2>6.1 收入与客户结构</h2>
+<div class="chart-container">
+  <div class="chart-title">图 6-1 收入结构（{{年份}}，按{{产品线/客户类型}}）</div>
+  <div class="chart" id="c5"></div>
+</div>
+<div class="chart-note">数据来源：表 6-1 <span class="src">[S1]</span>。</div>
+
+<table><caption>表 6-1 客户结构与健康度</caption>
+  
+  <thead><tr><th>指标</th><th class="n">数值</th><th>同业参考区间</th><th>判断</th></tr></thead>
+  <tbody>
+    <tr><td>CR1 收入占比</td><td class="n">{{}}%</td><td>&lt;20%</td><td>{{}}</td></tr>
+    <tr><td>CR5 收入占比</td><td class="n">{{}}%</td><td>&lt;50%</td><td>{{}}</td></tr>
+    <tr><td>金额口径复购率</td><td class="n">{{}}%</td><td>&gt;60%</td><td>{{}}</td></tr>
+    <tr><td>合同账期 / 实际回款天数</td><td class="n">{{}} 天 / {{}} 天</td><td>差异 &lt;15 天</td><td>{{}}</td></tr>
+    <tr><td>付费客户数</td><td class="n">{{}} 家</td><td>—</td><td>{{}}</td></tr>
+  </tbody>
+</table>
+
+<h2>6.2 单位经济模型</h2>
+<div class="chart-container">
+  <div class="chart-title">图 6-2 单位经济指标与同业对比（万元 / 倍数）</div>
+  <div class="chart" id="c6"></div>
+</div>
+<div class="chart-note">LTV = ARPU × 毛利率 × (1/年流失率)；CAC =（销售费用+市场费用）/ 新增付费客户数。流失率取 {{}}%（口径：{{}}），属推算值 <span class="src">[E5]</span>。</div>
+
+<div class="kpi-grid">
+  <div class="kpi"><div class="k">LTV / CAC</div><div class="v">{{}}<span class="u">x</span></div></div>
+  <div class="kpi"><div class="k">CAC 回收期</div><div class="v">{{}}<span class="u">月</span></div></div>
+  <div class="kpi"><div class="k">毛利率</div><div class="v">{{}}<span class="u">%</span></div></div>
+  <div class="kpi"><div class="k">现金周转周期</div><div class="v">{{}}<span class="u">天</span></div></div>
+</div>
+
+<h2>6.3 渠道有效性</h2>
+<p>{{直销与经销占比、渠道费用率与直销费用率对比、返点机制、窜货风险。须说明终端价格体系是否统一、有无历史窜货记录。}}</p>
+
+<!-- ==================== 财务诊断 ==================== -->
+<h1 class="sec"><span class="num">07</span>财务诊断</h1>
+
+<h2>7.1 核心财务数据</h2>
+<table><caption>表 7-1 近三年及预测财务数据（万元）</caption>
+  
+  <thead><tr><th>科目</th><th class="n">{{Y-2}}</th><th class="n">{{Y-1}}</th><th class="n">{{Y}}</th><th class="n">{{Y+1}}E</th><th class="n">{{Y+2}}E</th></tr></thead>
+  <tbody>
+    <tr><td>营业收入</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td></tr>
+    <tr><td>营业成本</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td></tr>
+    <tr><td>毛利率</td><td class="n">{{}}%</td><td class="n">{{}}%</td><td class="n">{{}}%</td><td class="n">{{}}%</td><td class="n">{{}}%</td></tr>
+    <tr><td>净利润</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td></tr>
+    <tr><td>经营活动现金流净额</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td></tr>
+    <tr><td>应收账款</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td></tr>
+    <tr><td>期末现金及等价物</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}</td></tr>
+  </tbody>
+</table>
+<div class="tbl-note">数据来源：{{审计报告文件名}}，资产负债表与利润表，基准日 {{}}，金额保留两位小数 <span class="src">[S1]</span>；评估基准日相关科目取资产基础法评估申报表 <span class="src">[S3]</span>。预测数据来源为企业管理层提供的经营计划 <span class="src">[S9]</span>。</div>
+
+<div class="chart-container">
+  <div class="chart-title">图 7-1 收入、毛利率与经营现金流（万元 / %）</div>
+  <div class="chart" id="c7"></div>
+</div>
+<div class="chart-note">数据来源：表 7-1。关注收入增长与经营现金流的背离程度。</div>
+
+<h2>7.2 五组勾稽校验</h2>
+<table><caption>表 7-2 五组勾稽校验</caption>
+  <thead><tr><th style="width:20%">校验项</th><th class="n" style="width:14%">本期值</th><th class="n" style="width:14%">上期值</th><th>结论</th></tr></thead>
+  <tbody>
+    <tr><td>净利润与经营现金流差额</td><td class="n">{{}}</td><td class="n">{{}}</td><td>{{}}</td></tr>
+    <tr><td>应收增速 vs 收入增速</td><td class="n">{{}}% / {{}}%</td><td class="n">{{}}% / {{}}%</td><td>{{}}</td></tr>
+    <tr><td>DSO</td><td class="n">{{}} 天</td><td class="n">{{}} 天</td><td>{{}}</td></tr>
+    <tr><td>DIO</td><td class="n">{{}} 天</td><td class="n">{{}} 天</td><td>{{}}</td></tr>
+    <tr><td>货币资金隐含利率</td><td class="n">{{}}%</td><td class="n">{{}}%</td><td>{{}}</td></tr>
+    <tr><td>收入 vs 增值税申报</td><td class="n">{{}} / {{}}</td><td class="n">{{}} / {{}}</td><td>{{}}</td></tr>
+  </tbody>
+</table>
+<p>{{对每组异常做解释，说明是业务原因还是核算原因，以及是否影响对本报告结论的判断。}}</p>
+
+<h2>7.3 资金消耗与安全运营月数</h2>
+<div class="kpi-grid">
+  <div class="kpi"><div class="k">月均净消耗</div><div class="v">{{}}<span class="u">万元</span></div></div>
+  <div class="kpi"><div class="k">期末现金</div><div class="v">{{}}<span class="u">万元</span></div></div>
+  <div class="kpi"><div class="k">当前 runway</div><div class="v">{{}}<span class="u">月</span></div></div>
+  <div class="kpi"><div class="k">本轮后 runway</div><div class="v">{{}}<span class="u">月</span></div></div>
+</div>
+<p>{{计算过程与一次性因素剔除说明。给出零融资情况下的经营性现金流转正时点判断，以及这个判断对下一轮融资依赖度的含义。}}</p>
+
+<h2>7.4 收入敏感性测试</h2>
+<div class="chart-container">
+  <div class="chart-title">图 7-2 收入 ±15% 三情景对估值与 MOIC 的影响</div>
+  <div class="chart" id="c8"></div>
+</div>
+<div class="chart-note">基准情景采用管理层预测 <span class="src">[S9]</span>；悲观与乐观情景的毛利率、费用率按参考文件设定的联动规则调整。估值按可比公司 EV/Revenue 中位数 {{}}x 并施加 {{}}% 流动性折价。</div>
+
+<table><caption>表 7-3 收入敏感性三情景结果</caption>
+  <thead><tr><th>情景</th><th class="n">收入（万元）</th><th class="n">毛利率</th><th class="n">净利润（万元）</th><th class="n">估值（万元）</th><th class="n">MOIC</th></tr></thead>
+  <tbody>
+    <tr><td>悲观（-15%）</td><td class="n">{{}}</td><td class="n">{{}}%</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}x</td></tr>
+    <tr><td>基准</td><td class="n">{{}}</td><td class="n">{{}}%</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}x</td></tr>
+    <tr><td>乐观（+15%）</td><td class="n">{{}}</td><td class="n">{{}}%</td><td class="n">{{}}</td><td class="n">{{}}</td><td class="n">{{}}x</td></tr>
+  </tbody>
+</table>
+
+<!-- ==================== 团队 ==================== -->
+<h1 class="sec"><span class="num">08</span>团队与组织</h1>
+<table><caption>表 8-1 核心团队履历与核验情况</caption>
+  <thead><tr><th style="width:16%">姓名</th><th style="width:14%">职务</th><th>履历要点</th><th style="width:16%">可核验情况</th></tr></thead>
+  <tbody>
+    <tr><td>{{}}</td><td>{{}}</td><td>{{毕业院校、任职经历，只写可核验的部分}}</td><td>学信网 / 专利署名 / 工商任职</td></tr>
+    <tr><td>{{}}</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+  </tbody>
+</table>
+<div class="tbl-note">失信与涉诉核查：中国执行信息公开网、裁判文书网、信用中国，核查日 {{}}。核查结果 {{}}。</div>
+<p>{{股权健康度：创始人直接与间接持股合计、一致行动安排、期权池、对赌与回购条款的实际约束力。组织效率：人均创收、销售人效、近 12 个月核心人员变动。}}</p>
+
+<!-- ==================== 差异化 ==================== -->
+<h1 class="sec"><span class="num">09</span>差异化优势</h1>
+<div class="card">
+  <div class="h">技术差异化</div>
+  <p class="row">{{核心指标与最强竞品的对比数值，差距可维持的时间与依据。}}</p>
+</div>
+<div class="card">
+  <div class="h">商业模式差异化</div>
+  <p class="row">{{价值链上被重构的环节，以及带来的成本或效率改善量化。}}</p>
+</div>
+<div class="card">
+  <div class="h">市场定位差异化</div>
+  <p class="row">{{选择的客户群或场景，以及这个选择的代价。}}</p>
+</div>
+<p>{{收尾段：如果给竞争对手 12 个月和同等资金，能否追上。给出判断与理由。}}</p>
+
+<!-- ==================== 风险 ==================== -->
+<h1 class="sec"><span class="num">10</span>风险雷达与登记表</h1>
+<div class="chart-container">
+  <div class="chart-title">图 10-1 六类风险强度雷达（0-5 分，分值越高风险越大）</div>
+  <div class="chart" id="c9"></div>
+</div>
+<div class="chart-note">打分口径：5 分 = 可能导致本金损失 50% 以上；3 分 = 影响回报率 10%-50%；1 分 = 仅影响表述完整性。行业基准取同赛道可比公司平均水平。</div>
+
+<h3>高风险</h3>
+<div class="card high">
+  <div class="h"><span class="lvl">高</span>{{风险名称}}</div>
+  <p class="row"><b>风险描述：</b>{{具体到可验证的事实，不写"存在一定风险"}}</p>
+  <p class="row"><b>影响程度：</b>{{量化到金额、估值折让或份额损失}}</p>
+  <p class="row"><b>触发概率：</b>{{高/中/低}}，依据 {{}}</p>
+  <p class="row"><b>解决路径：</b>{{谁在什么节点做什么，或退出的触发条件}}</p>
+  <p class="row"><b>残余风险：</b>{{缓释后还剩什么}}</p>
+</div>
+
+<h3>中风险</h3>
+<div class="card mid">
+  <div class="h"><span class="lvl">中</span>{{风险名称}}</div>
+  <p class="row"><b>风险描述：</b>{{}}</p>
+  <p class="row"><b>影响程度：</b>{{}}</p>
+  <p class="row"><b>触发概率：</b>{{}}</p>
+  <p class="row"><b>解决路径：</b>{{}}</p>
+  <p class="row"><b>残余风险：</b>{{}}</p>
+</div>
+
+<h3>低风险</h3>
+<div class="card low">
+  <div class="h"><span class="lvl">低</span>{{风险名称}}</div>
+  <p class="row"><b>风险描述：</b>{{}}</p>
+  <p class="row"><b>影响程度：</b>{{}}</p>
+  <p class="row"><b>解决路径：</b>{{}}</p>
+</div>
+
+<!-- ==================== 空头论证 ==================== -->
+<h1 class="sec"><span class="num">11</span>空头论证</h1>
+<p>{{引导段：说明本节列出的是最可能推翻投资结论的三条论证，以及为什么选择这三条。}}</p>
+
+<h3>空头论点一：{{一句话论点}}</h3>
+<p><b>证据：</b>{{具体数据或事实}}</p>
+<p><b>若成立的影响：</b>{{估值、回报、退出的具体变化}}</p>
+<p><b>证伪所需证据：</b>{{什么数据出现，这条论点不成立}}</p>
+
+<h3>空头论点二：{{}}</h3>
+<p><b>证据：</b>{{}}</p>
+<p><b>若成立的影响：</b>{{}}</p>
+<p><b>证伪所需证据：</b>{{}}</p>
+
+<h3>空头论点三：{{}}</h3>
+<p><b>证据：</b>{{}}</p>
+<p><b>若成立的影响：</b>{{}}</p>
+<p><b>证伪所需证据：</b>{{}}</p>
+
+<!-- ==================== 估值 ==================== -->
+<h1 class="sec"><span class="num">12</span>估值与交易结构</h1>
+
+<h2>12.1 多法估值与同业对比</h2>
+<div class="chart-container">
+  <div class="chart-title">图 12-1 可比公司 EV/Revenue 倍数区间与本项目所处位置</div>
+  <div class="chart" id="c10"></div>
+</div>
+<div class="chart-note">数据来源：{{}} 家可比公司 {{}} 年年报，取最近 12 个月收入；本项目倍数 = 投前估值 / {{}} 年收入。虚线为可比公司中位数。</div>
+
+<table><caption>表 12-1 多法估值测算与适用性</caption>
+  <thead><tr><th>方法</th><th class="n">测算结果（万元）</th><th>关键假设</th><th>适用性与局限</th></tr></thead>
+  <tbody>
+    <tr><td>可比公司 EV/Revenue</td><td class="n">{{}}</td><td>中位数 {{}}x，流动性折价 {{}}%</td><td>{{}}</td></tr>
+    <tr><td>可比交易 EV/Revenue</td><td class="n">{{}}</td><td>近 24 个月 {{}} 笔交易</td><td>{{}}</td></tr>
+    <tr><td>PS</td><td class="n">{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+    <tr><td>PEG</td><td class="n">{{不适用}}</td><td>—</td><td>净利润为负，PEG 分母失效，不适用</td></tr>
+    <tr><td>里程碑折现</td><td class="n">{{}}</td><td>里程碑达成概率 {{}}%</td><td>{{}}</td></tr>
+    <tr><td><strong>综合区间</strong></td><td class="n"><strong>{{}} - {{}}</strong></td><td>—</td><td>—</td></tr>
+  </tbody>
+</table>
+
+<h2>12.2 反向估值检验</h2>
+<p>{{退出所需企业价值 = 投后估值 × 目标 MOIC × (1+稀释率)；退出所需收入 = 该值 / 退出倍数；所需收入 CAGR = ... 。把算出的 CAGR 与行业增速、可比公司历史增速对比，给出"这个估值能否通过退出兑现"的明确判断。}}</p>
+
+<h2>12.3 交易结构建议</h2>
+<table><caption>表 12-2 交易条款建议</caption>
+  <thead><tr><th style="width:18%">条款</th><th style="width:32%">建议方案</th><th>理由与红线</th></tr></thead>
+  <tbody>
+    <tr><td>分层投资</td><td>{{首笔比例}}，余款按 {{里程碑}} 解锁</td><td>{{}}</td></tr>
+    <tr><td>优先清算权</td><td>{{1x 非参与型 / 上限}}</td><td>{{}}</td></tr>
+    <tr><td>反稀释</td><td>{{加权平均（broad-based）}}</td><td>{{}}</td></tr>
+    <tr><td>回购</td><td>{{触发条件、利率、义务人}}</td><td>{{}}</td></tr>
+    <tr><td>对赌</td><td>{{不超过三条指标}}</td><td>{{}}</td></tr>
+    <tr><td>董事与信息权</td><td>{{席位 / 月度报表}}</td><td>{{}}</td></tr>
+  </tbody>
+</table>
+
+<h2>12.4 退出路径</h2>
+<table><caption>表 12-3 退出路径测算</caption>
+  <thead><tr><th style="width:14%">路径</th><th class="n" style="width:14%">预计估值（万元）</th><th class="n" style="width:12%">时间</th><th>关键前提与风险</th></tr></thead>
+  <tbody>
+    <tr><td>IPO</td><td class="n">{{}}</td><td class="n">{{}} 年</td><td>{{板块适配性、财务门槛、需核实的规则}}</td></tr>
+    <tr><td>产业并购</td><td class="n">{{}}</td><td class="n">{{}} 年</td><td>潜在买家：{{名单及动机}}</td></tr>
+    <tr><td>老股转让</td><td class="n">{{}}</td><td class="n">{{}} 年</td><td>{{}}</td></tr>
+    <tr><td>回购</td><td class="n">{{}}</td><td class="n">{{}} 年</td><td>按义务人可偿付上限打折后实际可执行比例约 {{}}%</td></tr>
+  </tbody>
+</table>
+<div class="tbl-note">关于科创板第五套上市标准（未盈利企业），其适用范围与具体条件随监管政策调整，本报告不作确定性判断，须由保荐机构依据上交所现行审核规则及最新审核动态逐项核对，相关事项已列入第 15 章需人工复核事项。</div>
+
+<!-- ==================== 投后 ==================== -->
+<h1 class="sec"><span class="num">13</span>投后监控与治理</h1>
+<table><caption>表 13-1 投后监控指标与预警阈值</caption>
+  <thead><tr><th style="width:12%">类别</th><th style="width:26%">监控指标</th><th style="width:10%">频率</th><th style="width:18%">预警阈值</th><th>触发动作</th></tr></thead>
+  <tbody>
+    <tr><td>财务</td><td>月度收入、毛利率、经营现金流、现金余额</td><td>月</td><td>收入低于预算 20%、runway&lt;9 个月</td><td>{{}}</td></tr>
+    <tr><td>业务</td><td>新增订单、客户数、CR5、复购率</td><td>月/季</td><td>订单连续两季下滑</td><td>{{}}</td></tr>
+    <tr><td>技术</td><td>里程碑达成率、良率、专利授权数</td><td>季</td><td>关键里程碑延期&gt;3 个月</td><td>{{}}</td></tr>
+    <tr><td>市场</td><td>份额、竞品价格、中标率</td><td>季</td><td>竞品降价&gt;15%</td><td>{{}}</td></tr>
+    <tr><td>估值</td><td>下一轮隐含倍数、可比公司倍数</td><td>半年</td><td>下一轮估值低于本轮</td><td>{{}}</td></tr>
+  </tbody>
+</table>
+<p>{{派驻安排与对赌指标建议。说明为什么选这三条指标，以及把技术指标写进对赌为什么不合适。}}</p>
+
+<!-- ==================== 问题清单 ==================== -->
+<h1 class="sec"><span class="num">14</span>尽调问题清单</h1>
+<table><caption>表 14-1 尽调问题清单</caption>
+  <thead><tr><th style="width:12%">对象</th><th style="width:40%">问题</th><th style="width:22%">目的</th><th>红旗信号</th></tr></thead>
+  <tbody>
+    <tr><td>创始人</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+    <tr><td>CTO</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+    <tr><td>CFO</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+    <tr><td>销售负责人</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+    <tr><td>客户（≥3 家）</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+    <tr><td>供应商</td><td>{{}}</td><td>{{}}</td><td>{{}}</td></tr>
+  </tbody>
+</table>
+
+<!-- ==================== 信息缺口 ==================== -->
+<h1 class="sec"><span class="num">15</span>信息缺口与待确认事项</h1>
+<table><caption>表 15-1 信息缺口登记</caption>
+  <thead><tr><th style="width:8%">编号</th><th style="width:32%">缺口内容</th><th style="width:26%">为什么重要</th><th style="width:10%">影响度</th><th>获取方式</th></tr></thead>
+  <tbody>
+    <tr><td>G1</td><td>{{}}</td><td>{{}}</td><td>高</td><td>{{}}</td></tr>
+    <tr><td>G2</td><td>{{}}</td><td>{{}}</td><td>中</td><td>{{}}</td></tr>
+    <tr><td>G3</td><td>{{}}</td><td>{{}}</td><td>低</td><td>{{}}</td></tr>
+  </tbody>
+</table>
+
+<h1 class="sec"><span class="num">16</span>需人工复核事项</h1>
+<div class="card high">
+  <div class="h"><span class="lvl">必核</span>{{复核事项}}</div>
+  <p class="row"><b>事项：</b>{{}}</p>
+  <p class="row"><b>为什么必须人工复核：</b>{{涉及规则判断、主观定价或需要现场验证的部分}}</p>
+  <p class="row"><b>建议复核方式：</b>{{查规则原文 / 现场走访 / 第三方复测 / 律师意见}}</p>
+</div>
+<div class="card mid">
+  <div class="h"><span class="lvl">应核</span>{{复核事项}}</div>
+  <p class="row"><b>事项：</b>{{}}</p>
+  <p class="row"><b>建议复核方式：</b>{{}}</p>
+</div>
+
+<!-- ==================== 来源台账 ==================== -->
+<h1 class="sec"><span class="num">17</span>来源台账</h1>
+<table><caption>表 17-1 来源台账</caption>
+  <thead><tr><th style="width:8%">编号</th><th style="width:16%">来源类型</th><th style="width:34%">具体出处</th><th style="width:24%">取数位置</th><th>基准日</th></tr></thead>
+  <tbody>
+    <tr><td>S1</td><td>一手文件</td><td>{{文件名.pdf}}</td><td>第 {{}} 页 {{科目}}</td><td>{{}}</td></tr>
+    <tr><td>S2</td><td>一手文件</td><td>{{融资协议.pdf}}</td><td>第 {{}} 条</td><td>{{}}</td></tr>
+    <tr><td>S3</td><td>一手文件</td><td>{{评估申报表.xlsx}}</td><td>{{工作表名 / 科目}}</td><td>{{}}</td></tr>
+    <tr><td>S4</td><td>官方数据库</td><td>国家企业信用信息公示系统</td><td>股东及出资信息</td><td>{{抓取日}}</td></tr>
+    <tr><td>S5</td><td>权威第三方</td><td>{{机构《报告名》年份}}</td><td>第 {{}} 页</td><td>{{}}</td></tr>
+    <tr><td>S6</td><td>一手文件</td><td>{{客户清单.xlsx}}</td><td>{{工作表名}}</td><td>{{}}</td></tr>
+    <tr><td>S7</td><td>一手文件</td><td>{{检测报告.pdf}}</td><td>第 {{}} 页</td><td>{{}}</td></tr>
+    <tr><td>S8</td><td>一手文件</td><td>{{花名册.xlsx}}</td><td>{{工作表名}}</td><td>{{}}</td></tr>
+    <tr><td>S9</td><td>企业自述</td><td>{{商业计划书.pdf}}</td><td>第 {{}} 页</td><td>{{}}</td></tr>
+  </tbody>
+</table>
+
+<!-- ==================== 免责声明 ==================== -->
+<div class="disclaimer">
+  <strong>免责声明</strong><br>
+  ⚠️ 以上内容基于公开信息和用户提供材料整理生成，仅供参考，不构成任何投资建议或个股推荐，亦不构成法律意见或 AIOpenVC 投研中心的承诺。投资有风险，决策需谨慎，请结合一手来源和人工专业复核后再决策。
+</div>
+
+</div><!-- /wrap -->
+
+<div class="footer-credit">
+  AIOpenVC 投研中心<br>
+  <span id="footerDate">{{报告日期}}</span>
+</div>
+
+<script>
+/* ==================================================================
+   图表数据区：替换此对象即可更新全部图表，正文表格同步修改
+   ================================================================== */
+var DATA = {
+  score: {
+    total: 72, grade: 'A', decision: '推荐',
+    dims: [
+      {name:'赛道与市场', score:16, max:20},
+      {name:'技术壁垒', score:15, max:20},
+      {name:'商业模式与单位经济', score:11, max:15},
+      {name:'财务质量', score:10, max:15},
+      {name:'团队与组织', score:12, max:15},
+      {name:'估值与交易结构', score:8, max:15}
+    ]
+  },
+  tam: {
+    cats: ['自上而下', '自下而上', '类比法', 'SAM', 'SOM(第3年)'],
+    vals: [320, 285, 410, 118, 12]
+  },
+  market: {
+    years: ['2022','2023','2024','2025','2026E','2027E'],
+    size:  [96, 138, 192, 268, 352, 445],
+    growth:[null, 43.8, 39.1, 39.6, 31.3, 26.4]
+  },
+  matrix: [
+    {name:'本项目', x:4.2, y:3.6, size:12},
+    {name:'竞品A',  x:2.8, y:4.4, size:26},
+    {name:'竞品B',  x:4.6, y:2.2, size:18},
+    {name:'海外C',  x:3.4, y:4.8, size:34},
+    {name:'海外D',  x:2.2, y:2.6, size:22}
+  ],
+  mix: [
+    {name:'产品销售', value:58},
+    {name:'技术服务', value:24},
+    {name:'配件与耗材', value:12},
+    {name:'其他', value:6}
+  ],
+  unit: {
+    cats: ['LTV', 'CAC', 'LTV/CAC(x10)', '回收期(月)'],
+    project:  [42.5, 11.8, 36, 14],
+    industry: [38.0, 14.5, 26, 21]
+  },
+  fin: {
+    years: ['2023','2024','2025','2026E'],
+    revenue: [1380.42, 3156.78, 5820.15, 9800.00],
+    gross:   [38.2, 44.6, 48.3, 51.0],
+    ocf:     [-820.35, -640.12, 180.46, 920.00]
+  },
+  sens: {
+    scen: ['悲观(-15%)', '基准', '乐观(+15%)'],
+    valuation: [38600, 45400, 52200],
+    moic: [2.1, 2.9, 3.7]
+  },
+  risk: {
+    axes: ['技术迭代','市场需求','供应链','竞争价格','合规','团队'],
+    project: [3.2, 2.4, 3.8, 3.0, 2.0, 1.8],
+    industry:[3.0, 3.2, 3.0, 3.4, 2.6, 2.4]
+  },
+  valuation: {
+    cats: ['本项目', '可比A', '可比B', '可比C', '可比D', '中位数'],
+    vals: [7.8, 9.2, 6.4, 11.5, 5.8, 7.1]
+  }
+};
+
+/* ==================================================================
+   主题
+   ================================================================== */
+var THEME = {
+  primary:'#1a3a5c', secondary:'#2d5a87', accent:'#c5a572',
+  high:'#c0392b', mid:'#e67e22', low:'#27ae60',
+  axis:'#d9d4cd', text:'#2c2c2c', soft:'#6b6b6b',
+  palette:['#1a3a5c','#2d5a87','#c5a572','#5b8ab0','#8aa9c0','#dcc9a4']
+};
+var AXIS_X = {axisLine:{lineStyle:{color:THEME.axis}}, axisTick:{show:false},
+  axisLabel:{color:THEME.soft, fontSize:11}, splitLine:{show:false}};
+var AXIS_Y = {axisLine:{show:false}, axisTick:{show:false},
+  axisLabel:{color:THEME.soft, fontSize:11},
+  splitLine:{lineStyle:{color:'#efece7'}}};
+var TIP = {trigger:'axis', backgroundColor:'rgba(26,58,92,.94)', borderWidth:0,
+  textStyle:{color:'#fff', fontSize:12}, padding:[8,12]};
+
+var charts = [];
+function mount(id, option){
+  var el = document.getElementById(id);
+  if (!el || typeof echarts === 'undefined') return null;
+  var c = echarts.init(el, null, {
+    renderer:'canvas',
+    width: el.clientWidth || 640,
+    height: el.clientHeight || 340
+  });
+  c.setOption(option);
+  charts.push(c);
+  return c;
+}
+
+/* ---------- C1 记分卡 ---------- */
+(function(){
+  var d = DATA.score;
+  document.getElementById('scoreBig').textContent = d.total;
+  document.getElementById('scoreGrade').textContent = d.grade;
+  var dec = document.getElementById('scoreDecision');
+  dec.textContent = d.decision;
+  if (d.decision === '观望') dec.classList.add('watch');
+  if (d.decision === '否决') dec.classList.add('reject');
+
+  var names = d.dims.map(function(x){ return x.name; }).reverse();
+  var scores = d.dims.map(function(x){ return x.score; }).reverse();
+  var maxes  = d.dims.map(function(x){ return x.max; }).reverse();
+
+  mount('c1', {
+    grid:{left:130, right:70, top:20, bottom:38},
+    tooltip:{trigger:'item', backgroundColor:'rgba(26,58,92,.94)', borderWidth:0,
+      textStyle:{color:'#fff', fontSize:12},
+      formatter:function(p){ return p.name + '：' + p.value + ' / ' + maxes[p.dataIndex]; }},
+    xAxis:Object.assign({type:'value', max:20}, AXIS_Y),
+    yAxis:Object.assign({type:'category', data:names}, AXIS_X),
+    series:[
+      {name:'满分', type:'bar', barWidth:14, barGap:'-100%',
+       data:maxes, itemStyle:{color:'#efece7'}, silent:true, z:1},
+      {name:'得分', type:'bar', barWidth:14,
+       data:scores, z:2,
+       itemStyle:{color:function(p){
+         var v = scores[p.dataIndex], m = maxes[p.dataIndex], r = v/m;
+         return r >= 0.8 ? THEME.low : (r >= 0.6 ? THEME.secondary : THEME.mid);
+       }, borderRadius:[0,3,3,0]},
+       label:{show:true, position:'right', color:THEME.primary, fontSize:12,
+         fontWeight:'bold',
+         formatter:function(p){ return p.value + '/' + maxes[p.dataIndex]; }}}
+    ]
+  });
+})();
+
+/* ---------- C2 TAM/SAM/SOM ---------- */
+mount('c2', {
+  grid:{left:60, right:40, top:30, bottom:50},
+  tooltip:Object.assign({}, TIP, {formatter:function(ps){
+    return ps[0].name + '：' + ps[0].value + ' 亿元'; }}),
+  xAxis:Object.assign({type:'category', data:DATA.tam.cats,
+    axisLabel:{color:THEME.soft, fontSize:11, interval:0, rotate:0}}, AXIS_X),
+  yAxis:Object.assign({type:'value', name:'亿元',
+    nameTextStyle:{color:THEME.soft, fontSize:11}}, AXIS_Y),
+  series:[{
+    type:'bar', barWidth:'46%', data:DATA.tam.vals,
+    itemStyle:{borderRadius:[4,4,0,0],
+      color:function(p){ return p.dataIndex < 3 ? THEME.primary : THEME.secondary; }},
+    label:{show:true, position:'top', color:THEME.primary, fontWeight:'bold', fontSize:12}
+  }]
+});
+
+/* ---------- C3 市场趋势 ---------- */
+mount('c3', {
+  grid:{left:60, right:60, top:40, bottom:40},
+  tooltip:TIP,
+  legend:{data:['市场规模','增速'], top:0, right:0,
+    textStyle:{color:THEME.soft, fontSize:11}, itemWidth:12, itemHeight:8},
+  xAxis:Object.assign({type:'category', data:DATA.market.years}, AXIS_X),
+  yAxis:[
+    Object.assign({type:'value', name:'亿元', nameTextStyle:{color:THEME.soft, fontSize:11}}, AXIS_Y),
+    {type:'value', name:'%', nameTextStyle:{color:THEME.soft, fontSize:11},
+     axisLabel:{color:THEME.soft, fontSize:11, formatter:'{value}%'},
+     splitLine:{show:false}, axisLine:{show:false}}
+  ],
+  series:[
+    {name:'市场规模', type:'bar', barWidth:'44%', data:DATA.market.size,
+     itemStyle:{color:THEME.primary, borderRadius:[4,4,0,0]},
+     label:{show:true, position:'top', color:THEME.primary, fontSize:11}},
+    {name:'增速', type:'line', yAxisIndex:1, data:DATA.market.growth,
+     smooth:true, connectNulls:false, symbol:'circle', symbolSize:7,
+     lineStyle:{color:THEME.accent, width:3}, itemStyle:{color:THEME.accent},
+     label:{show:true, position:'top', color:THEME.accent, fontSize:11, formatter:'{c}%'}}
+  ]
+});
+
+/* ---------- C4 竞争矩阵 ---------- */
+mount('c4', {
+  grid:{left:70, right:60, top:40, bottom:60},
+  tooltip:{trigger:'item', backgroundColor:'rgba(26,58,92,.94)', borderWidth:0,
+    textStyle:{color:'#fff', fontSize:12},
+    formatter:function(p){
+      return '<b>' + p.data.name + '</b><br/>技术壁垒：' + p.data.value[1] +
+             '<br/>成本优势：' + p.data.value[0] + '<br/>估算份额：' + p.data.value[2] + '%';
+    }},
+  xAxis:Object.assign({type:'value', name:'成本优势 →', nameLocation:'middle', nameGap:30,
+    min:0, max:5, nameTextStyle:{color:THEME.soft, fontSize:12}}, AXIS_Y),
+  yAxis:Object.assign({type:'value', name:'技术壁垒 →', nameLocation:'middle', nameGap:40,
+    min:0, max:5, nameTextStyle:{color:THEME.soft, fontSize:12}}, AXIS_Y),
+  series:[{
+    type:'scatter',
+    symbolSize:function(val){ return Math.max(18, val[2] * 1.6); },
+    data:DATA.matrix.map(function(o, i){
+      return {name:o.name, value:[o.x, o.y, o.size],
+        itemStyle:{color: o.name === '本项目' ? THEME.accent : THEME.palette[i % 6],
+                   opacity: o.name === '本项目' ? 0.95 : 0.6,
+                   borderColor:'#fff', borderWidth:2}};
+    }),
+    label:{show:true, position:'top', color:THEME.text, fontSize:11,
+      formatter:function(p){ return p.data.name; }},
+    markLine:{silent:true, symbol:'none',
+      lineStyle:{type:'dashed', color:THEME.axis},
+      label:{show:false},
+      data:[{xAxis:3},{yAxis:3}]}
+  }]
+});
+
+/* ---------- C5 收入结构 ---------- */
+mount('c5', {
+  tooltip:{trigger:'item', backgroundColor:'rgba(26,58,92,.94)', borderWidth:0,
+    textStyle:{color:'#fff', fontSize:12}, formatter:'{b}：{c}%'},
+  legend:{bottom:0, left:'center', textStyle:{color:THEME.soft, fontSize:11},
+    itemWidth:12, itemHeight:8},
+  color:THEME.palette,
+  series:[{
+    type:'pie', radius:['42%','66%'], center:['50%','44%'],
+    avoidLabelOverlap:true,
+    itemStyle:{borderColor:'#fff', borderWidth:2},
+    label:{show:true, color:THEME.text, fontSize:12, formatter:'{b}\n{c}%'},
+    labelLine:{length:12, length2:14, lineStyle:{color:THEME.axis}},
+    data:DATA.mix
+  }]
+});
+
+/* ---------- C6 单位经济 ---------- */
+mount('c6', {
+  grid:{left:70, right:40, top:40, bottom:40},
+  tooltip:TIP,
+  legend:{data:['本项目','同业中位数'], top:0, right:0,
+    textStyle:{color:THEME.soft, fontSize:11}, itemWidth:12, itemHeight:8},
+  xAxis:Object.assign({type:'category', data:DATA.unit.cats}, AXIS_X),
+  yAxis:Object.assign({type:'value', name:'数值'}, AXIS_Y),
+  series:[
+    {name:'本项目', type:'bar', barWidth:'30%', data:DATA.unit.project,
+     itemStyle:{color:THEME.primary, borderRadius:[4,4,0,0]},
+     label:{show:true, position:'top', color:THEME.primary, fontSize:11, fontWeight:'bold'}},
+    {name:'同业中位数', type:'bar', barWidth:'30%', data:DATA.unit.industry,
+     itemStyle:{color:'#c9d3dd', borderRadius:[4,4,0,0]},
+     label:{show:true, position:'top', color:THEME.soft, fontSize:11}}
+  ]
+});
+
+/* ---------- C7 财务趋势 ---------- */
+mount('c7', {
+  grid:{left:70, right:80, top:52, bottom:40},
+  tooltip:TIP,
+  legend:{data:['营业收入','经营活动现金流净额','毛利率'], top:0, left:'center',
+    textStyle:{color:THEME.soft, fontSize:11}, itemWidth:12, itemHeight:8},
+  xAxis:Object.assign({type:'category', data:DATA.fin.years}, AXIS_X),
+  yAxis:[
+    Object.assign({type:'value', name:'万元', nameTextStyle:{color:THEME.soft, fontSize:11}}, AXIS_Y),
+    {type:'value', name:'%', nameTextStyle:{color:THEME.soft, fontSize:11},
+     axisLabel:{color:THEME.soft, fontSize:11, formatter:'{value}%'},
+     splitLine:{show:false}, axisLine:{show:false}}
+  ],
+  series:[
+    {name:'营业收入', type:'bar', barWidth:'34%', data:DATA.fin.revenue,
+     itemStyle:{color:THEME.primary, borderRadius:[4,4,0,0]},
+     label:{show:true, position:'top', color:THEME.primary, fontSize:11}},
+    {name:'经营活动现金流净额', type:'bar', barWidth:'34%', data:DATA.fin.ocf,
+     itemStyle:{color:'#8aa9c0', borderRadius:[4,4,0,0]},
+     label:{show:true, position:'top', color:THEME.secondary, fontSize:11}},
+    {name:'毛利率', type:'line', yAxisIndex:1, data:DATA.fin.gross,
+     smooth:true, symbol:'circle', symbolSize:7,
+     lineStyle:{color:THEME.accent, width:3}, itemStyle:{color:THEME.accent},
+     label:{show:true, position:'bottom', color:THEME.accent, fontSize:11, formatter:'{c}%'}}
+  ]
+});
+
+/* ---------- C8 敏感性 ---------- */
+mount('c8', {
+  grid:{left:80, right:70, top:40, bottom:40},
+  tooltip:TIP,
+  legend:{data:['估值（万元）','MOIC（倍）'], top:0, right:0,
+    textStyle:{color:THEME.soft, fontSize:11}, itemWidth:12, itemHeight:8},
+  xAxis:Object.assign({type:'category', data:DATA.sens.scen}, AXIS_X),
+  yAxis:[
+    Object.assign({type:'value', name:'万元', nameTextStyle:{color:THEME.soft, fontSize:11}}, AXIS_Y),
+    {type:'value', name:'倍', nameTextStyle:{color:THEME.soft, fontSize:11},
+     axisLabel:{color:THEME.soft, fontSize:11}, splitLine:{show:false}, axisLine:{show:false}}
+  ],
+  series:[
+    {name:'估值（万元）', type:'bar', barWidth:'40%', data:DATA.sens.valuation,
+     itemStyle:{borderRadius:[4,4,0,0],
+       color:function(p){ return [ '#c9d3dd', THEME.primary, THEME.secondary ][p.dataIndex]; }},
+     label:{show:true, position:'top', color:THEME.primary, fontSize:11, fontWeight:'bold'}},
+    {name:'MOIC（倍）', type:'line', yAxisIndex:1, data:DATA.sens.moic,
+     symbol:'circle', symbolSize:9, lineStyle:{color:THEME.accent, width:3},
+     itemStyle:{color:THEME.accent},
+     label:{show:true, position:'top', color:THEME.accent, fontSize:11, formatter:'{c}x'}}
+  ]
+});
+
+/* ---------- C9 风险雷达 ---------- */
+mount('c9', {
+  tooltip:{trigger:'item', backgroundColor:'rgba(26,58,92,.94)', borderWidth:0,
+    textStyle:{color:'#fff', fontSize:12}},
+  legend:{data:['本项目','行业基准'], top:0, right:20,
+    textStyle:{color:THEME.soft, fontSize:11}, itemWidth:12, itemHeight:8},
+  radar:{
+    center:['50%','54%'], radius:'70%',
+    indicator:DATA.risk.axes.map(function(a){ return {name:a, max:5}; }),
+    axisName:{color:THEME.text, fontSize:12},
+    splitLine:{lineStyle:{color:'#e7e2da'}},
+    splitArea:{areaStyle:{color:['rgba(250,249,247,.6)','rgba(255,255,255,0)']}},
+    axisLine:{lineStyle:{color:'#e7e2da'}}
+  },
+  series:[{
+    type:'radar', symbolSize:5,
+    data:[
+      {name:'本项目', value:DATA.risk.project,
+       lineStyle:{color:THEME.high, width:2}, itemStyle:{color:THEME.high},
+       areaStyle:{color:'rgba(192,57,43,.18)'}},
+      {name:'行业基准', value:DATA.risk.industry,
+       lineStyle:{color:THEME.secondary, width:2, type:'dashed'},
+       itemStyle:{color:THEME.secondary}, areaStyle:{color:'rgba(45,90,135,.08)'}}
+    ]
+  }]
+});
+
+/* ---------- C10 估值对比 ---------- */
+mount('c10', {
+  grid:{left:70, right:50, top:36, bottom:40},
+  tooltip:Object.assign({}, TIP, {formatter:function(ps){
+    return ps[0].name + '：' + ps[0].value + 'x'; }}),
+  xAxis:Object.assign({type:'category', data:DATA.valuation.cats}, AXIS_X),
+  yAxis:Object.assign({type:'value', name:'EV/Revenue（x）',
+    nameTextStyle:{color:THEME.soft, fontSize:11}}, AXIS_Y),
+  series:[{
+    type:'bar', barWidth:'46%', data:DATA.valuation.vals,
+    itemStyle:{borderRadius:[4,4,0,0],
+      color:function(p){
+        if (p.dataIndex === 0) return THEME.accent;
+        if (p.dataIndex === DATA.valuation.vals.length - 1) return THEME.secondary;
+        return '#c9d3dd';
+      }},
+    label:{show:true, position:'top', color:THEME.primary, fontSize:11, fontWeight:'bold',
+      formatter:'{c}x'},
+    markLine:{silent:true, symbol:'none',
+      lineStyle:{color:THEME.secondary, type:'dashed', width:1.5},
+      label:{formatter:'中位数 ' + DATA.valuation.vals[5] + 'x', color:THEME.secondary, fontSize:11,
+        position:'insideStartTop', backgroundColor:'#fff', padding:[2,4]},
+      data:[{yAxis:DATA.valuation.vals[5]}]}
+  }]
+});
+
+/* ==================================================================
+   自适应
+   ================================================================== */
+window.addEventListener('resize', function(){
+  charts.forEach(function(c){ c && c.resize(); });
+});
+if (window.ResizeObserver){
+  var ro = new ResizeObserver(function(){
+    charts.forEach(function(c){ c && c.resize(); });
+  });
+  document.querySelectorAll('.chart-container').forEach(function(el){ ro.observe(el); });
+}
+
+/* ==================================================================
+   打印防截断：高度超过版心的 break-inside:avoid 块放开限制
+   ================================================================== */
+(function(){
+  function fixPrintBreaks(){
+    var mm2px = 96/25.4, pageH = 265*mm2px, safe = pageH*0.92;
+    var fixed = 0;
+    var list = document.querySelectorAll('.chart-container,.card,.kpi,.score-wrap,table,section,div');
+    for (var i=0;i<list.length;i++){
+      var el = list[i], cs = getComputedStyle(el);
+      var avoid = cs.breakInside === 'avoid' || cs.pageBreakInside === 'avoid';
+      if (avoid && el.getBoundingClientRect().height > safe){
+        el.style.breakInside = 'auto';
+        el.style.pageBreakInside = 'auto';
+        fixed++;
+      }
+    }
+    return {pageH: Math.round(pageH), fixed: fixed};
+  }
+  window.fixPrintBreaks = fixPrintBreaks;
+  window.addEventListener('beforeprint', fixPrintBreaks);
+})();
+</script>
+</body>
+</html>
